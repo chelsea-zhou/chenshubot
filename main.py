@@ -36,5 +36,5 @@ async def get_answer(req: Request):
 def get_context(context):
     unique_context = set()
     for c in context:
-        unique_context.add(c.metadata['document'] + '.txt')
+        unique_context.add(c.metadata['document'])
     return unique_context
