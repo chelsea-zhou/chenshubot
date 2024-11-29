@@ -22,8 +22,8 @@ async def root():
 
 @app.post("/chat")
 async def get_answer(req: Request):
-    print(req)
     query = req.query
+    print('query:', query)
     answer = chatbot(query)
     context = get_context(answer['context'])
     return {

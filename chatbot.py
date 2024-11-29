@@ -49,16 +49,10 @@ def getDocSearch(embeddings):
 
 def chatbot(query):
     try :
-        #initialize_pinecone()
-        print('query', query)
         embedding_obj = create_embedding_obj()
-        #print('got embedding',embedding_obj)
         pinecone_vector_store = getDocSearch(embedding_obj)
-        #print('got vector store',pinecone_vector_store)
         retrieval_chain = get_retrieval_chain(pinecone_vector_store)
-        #print('got chain',retrieval_chain)
         answer = retrieval_chain.invoke({"input": query})
-        #print(answer)
         return answer
     except Exception as e:
         print(f"An error occurred: {e}")
