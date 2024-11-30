@@ -26,6 +26,7 @@ async def get_answer(req: Request):
     print('query:', query)
     answer = chatbot(query)
     context = get_context(answer['context'])
+    print('query:' + query + '. ' + 'response:' + answer)
     return {
         "query": query,
         "answer": answer['answer'],
