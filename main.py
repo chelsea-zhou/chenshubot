@@ -1,9 +1,12 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Request, HTTPException
 from chatbot import chatbot
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 app = FastAPI()
+limiter = Limiter(key_func=get_remote_address)
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,17 +16,20 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-class Request(BaseModel):
-    query: str
+# Add a global exception handler for rate limiting
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+    raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to FastAPI!"}
 
 @app.post("/chat")
-async def get_answer(req: Request):
-    query = req.query
-    print('query:', query)
+@limiter.limit("5/minute")  # Limit to 5 requests per minute per IP
+async def get_answer(request: Request):
+    req = await request.json()
+    query = req['query']
     res = chatbot(query)
     answer = res['answer']
     context = []
