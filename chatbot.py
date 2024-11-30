@@ -56,4 +56,8 @@ def chatbot(query):
         return answer
     except Exception as e:
         print(f"An error occurred: {e}")
+        return {
+            "answer": 'sorry, something went wrong.',
+            "context": []
+        }
 

@@ -24,12 +24,15 @@ async def root():
 async def get_answer(req: Request):
     query = req.query
     print('query:', query)
-    answer = chatbot(query)
-    context = get_context(answer['context'])
+    res = chatbot(query)
+    answer = res['answer']
+    context = []
+    if (answer) :
+        context = get_context(res['context'])
     print('query:' + query + '. ' + 'response:' + answer)
     return {
         "query": query,
-        "answer": answer['answer'],
+        "answer": answer,
         "context": context
     }
 
